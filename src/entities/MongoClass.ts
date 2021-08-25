@@ -1,7 +1,8 @@
 import { Entity, PrimaryKey, Property, SerializedPrimaryKey } from "@mikro-orm/core"
 import { ObjectId } from "@mikro-orm/mongodb"
-import { Field } from 'type-graphql'
+import { Field, InterfaceType } from 'type-graphql'
 
+@InterfaceType()
 @Entity({ abstract: true })
 
 export abstract class MongoClass{

@@ -21,4 +21,5 @@ export class Order extends MongoClass {
 	@Field(() => String)
 	@Property({ type: 'date', nullable: true })
 	paytime?: Date
+  user: any
 }
