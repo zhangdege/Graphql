@@ -18,9 +18,8 @@ export class User extends MongoClass {
 	@Property({ type: 'text', unique: true })
 	phone!: string
 
-	@Property({ type: 'text' })
+	@Property()
 	password!: string
-
 
 	// @Field(() => Float)
 	// @Property()

@@ -5,11 +5,12 @@ import { Redis } from 'ioredis'
 // import {Request,Response} from "express"
 import path from "path"
 import { Post } from "./entities/Post"
+import { User } from "./entities/User"
 
 dotenv.config({path:path.join(__dirname,'..','.env')})
 
-export const entities = [Post]
-const EntityName = ['Post'] as const
+export const entities = [Post,User]
+const EntityName = ['Post',"User"] as const
 
 // I don't underStand why to write it ,because Although I am delete it , the program is work in normal.
 export type Items = typeof entities[number]
@@ -24,5 +25,5 @@ export default {
   type: 'mongo',
   clientUrl:process.env.MONGODB_URL,
   entities,
-  debug:process.env.NODE_DEV === 'development'
+  debug:true
 } as Parameters<typeof MikroORM.init>[0]
