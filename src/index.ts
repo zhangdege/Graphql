@@ -70,7 +70,8 @@ const main = async () => {
 				maxAge: 1000 * 60 * 60 * parseInt(process.env.COOKIE_MAXAGE_HOURS!),
 				httpOnly: true,
 				sameSite: 'lax', // csrf
-				secure: process.env.NODE_ENV === 'production',
+				// secure: process.env.NODE_ENV === 'production',
+				secure: true,
 			},
 
 			secret: process.env.REDIS_SECRET,

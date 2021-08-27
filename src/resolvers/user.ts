@@ -1,6 +1,15 @@
 import dotenv from 'dotenv'
 import path from 'path'
-import { Arg, Ctx, Field, Mutation, ObjectType, Query, Resolver } from 'type-graphql'
+import {
+	Arg,
+	Ctx,
+	Field,
+	InputType,
+	Mutation,
+	ObjectType,
+	Query,
+	Resolver,
+} from 'type-graphql'
 import { User } from '../entities/User'
 import { Mycontext } from '../mikro-orm.config'
 
@@ -12,6 +21,14 @@ export class FieldError {
 	field: string
 	@Field()
 	message: string
+}
+
+@InputType()
+class PhonePasswordInput {
+	@Field()
+	phone: string
+	@Field()
+	password: string
 }
 
 @ObjectType()
@@ -40,56 +57,37 @@ export class UserResolve {
 		return em.find(User, {})
 	}
 
-	@Query(() => [User])
-	async userLogin(
+	@Mutation(() => User)
+	async createUser(
 		@Ctx() { em }: Mycontext,
-		@Arg('phone') phone: string,
-		@Arg('password') password: string
-	): Promise<User[]> {
-		const user = await em.find(User, { phone, password })
+		@Arg('ruserData') ruserData: PhonePasswordInput
+	): Promise<User | null> {
+		const { phone, password } = ruserData
+		const user = await em.findOne(User, { phone })
+
+		if (user === null) {
+			const userInfoforOne = em.create(User, { phone, password })
+			await em.persistAndFlush(userInfoforOne)
+			return userInfoforOne
+		}
+
 		return user
 	}
 
-	@Mutation(() => User)
-	async createAuser(
+	@Mutation(() => UserResponse)
+	async userLogin(
 		@Ctx() { em }: Mycontext,
-		@Arg('phone') phone: string,
-		@Arg('password') password: string
-	): Promise<User> {
-		const useUser = { phone, password }
-		const userInfoforOne = em.create(User, useUser)
-		await em.persistAndFlush(userInfoforOne)
-		return userInfoforOne
+		@Arg('userData') userData: PhonePasswordInput
+	): Promise<UserResponse> {
+		const { phone, password } = userData
+		const user = await em.findOne(User, { phone, password })
+		if (!user) {
+			return UserResponse.createError('phone', '查无此用户')
+		}
+		if (password !== user.password) {
+			return UserResponse.createError('password', '密码错误')
+		}
+
+		return { user }
 	}
-
-	//   @Mutation(() => UserResponse)
-	// async sendToken(
-	// 	@Arg('phone') phone: string,
-	// 	@Ctx() { redis }: Mycontext
-	// ): Promise<UserResponse> {
-	// 	const token = '2' + Math.random().toString().slice(-5)
-	// 	const toShort = await redis.get(process.env.PHONE_TOKEN_AT_TIME_PREFIX + phone)
-	// 	// if (toShort && process.env.NODE_ENV === 'production') {
-	// 	if (toShort) {
-	// 		return UserResponse.createError('phone', '发送太频繁')
-	// 	}
-	// 	await redis.set(
-	// 		process.env.PHONE_TOKEN_AT_TIME_PREFIX + phone,
-	// 		123,
-	// 		'EX',
-	// 		parseInt(process.env.PHONE_TOKEN_FREQUENCY_SECONDS!)
-	// 	)
-
-	// 	const setResult = await redis.set(
-	// 		process.env.PHONE_PREFIX + token,
-	// 		phone,
-	// 		'EX',
-	// 		parseInt(process.env.PHONE_TOKEN_EXPIRE_SECONDS!)
-	// 	)
-	// 	if (setResult !== 'OK') {
-	// 		return UserResponse.createError('phone', '服务器出错')
-	// 	}
-	// 	// await sendSMSToken({ phone, smsToken: token })
-	// 	return UserResponse.createError('phone', '发送成功')
-	// }
 }
