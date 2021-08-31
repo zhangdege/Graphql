@@ -1,6 +1,7 @@
-import { Entity, Property } from '@mikro-orm/core'
-import { Field, InputType, ObjectType } from 'type-graphql'
+import { Collection, Entity, OneToMany, Property } from '@mikro-orm/core'
+import { Field, Float, InputType, ObjectType } from 'type-graphql'
 import { MongoClass } from './MongoClass'
+import { Post } from './Post'
 
 @InputType()
 export class adminUserInput {
@@ -21,11 +22,15 @@ export class User extends MongoClass {
 	@Property()
 	password!: string
 
-	// @Field(() => Float)
-	// @Property()
-	// balance = 0
+	@Field(() => String)
+	@Property({ nullable: true })
+	role: 'User'
 
-	// @Field(() => [Post])
-	// @OneToMany(() => Post, (post) => post.creator)
-	// posts = new Collection<Post>(this)
+	@Field(() => Float)
+	@Property()
+	balance = 0
+
+	@Field(() => [Post])
+	@OneToMany(() => Post, (post) => post.creator)
+	posts = new Collection<Post>(this)
 }

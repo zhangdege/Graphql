@@ -11,9 +11,6 @@ export const sendSMSToken = async (options: {
 	const { phone, smsToken } = options
 
 	const client = new Core({
-    /**
-     * Here has some problem.is the type String 
-     */
 		accessKeyId: process.env.ALI_ID!,
 		accessKeySecret: process.env.ALI_SECRET!,
 		endpoint: 'https://dysmsapi.aliyuncs.com',

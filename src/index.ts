@@ -13,14 +13,8 @@ import myMikroconfig from './mikro-orm.config'
 import { PostResolver } from './resolvers/post'
 import { UserResolve } from './resolvers/user'
 
-/**
- * To define the enviroment argument.
- */
 dotenv.config({ path: path.join(__dirname, '..', '.env') })
 
-/**
- * Defined a function to init this program.
- */
 const main = async () => {
 	const orm = await MikroORM.init(myMikroconfig)
 	const app = express()
@@ -29,12 +23,17 @@ const main = async () => {
 	//   origin:process.env.FRONTEND_URL,
 	//   credentials:true
 	// }))
-	app.use(cors())
+	app.use(
+		cors({
+			credentials: true,
+			origin: 'http://localhost:3000',
+		})
+	)
 
 	const RedisStore = connectRedis(session)
 	const options: Redis.RedisOption = {
 		host: process.env.REDIS_URL,
-		password: process.env.REDIS_PASSWORD,
+		// password: process.env.REDIS_PASSWORD,  //test env Not the pwd
 		retryStrategy: (times) => Math.max(times * 100, 3000),
 	}
 	const redis = new Redis(process.env.REDIS_URL, options)
@@ -42,9 +41,7 @@ const main = async () => {
 		publisher: new Redis(process.env.REDIS_URL, options),
 		subscriber: new Redis(process.env.REDIS_URL, options),
 	})
-	/**
-	 * To create an Apollo Object.
-	 */
+
 	const apolloServer = new ApolloServer({
 		schema: await buildSchema({
 			resolvers: [PostResolver, UserResolve],
@@ -56,6 +53,7 @@ const main = async () => {
 				em: orm.em,
 				req,
 				res,
+				redis,
 			}
 		},
 	})
@@ -70,24 +68,17 @@ const main = async () => {
 				maxAge: 1000 * 60 * 60 * parseInt(process.env.COOKIE_MAXAGE_HOURS!),
 				httpOnly: true,
 				sameSite: 'lax', // csrf
-				// secure: process.env.NODE_ENV === 'production',
-				secure: true,
+				secure: process.env.NODE_ENV === 'production',
+				// secure: false,
 			},
-
 			secret: process.env.REDIS_SECRET,
 			saveUninitialized: false,
 			resave: false,
 		})
 	)
 
-	/**
-	 * Use the apollo server.
-	 */
 	apolloServer.applyMiddleware({ app, cors: false })
 	app.use(express.urlencoded({ extended: true }))
-	/**
-	 * Is not to regist with AliPay
-	 */
 	// app.post(process.env.ALIPAY_CB, async (req: Request, res: Response) => {
 	//   await alipayCallBack(req, res, orm.em, pubSub)
 	// })

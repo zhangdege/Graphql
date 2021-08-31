@@ -1,6 +1,7 @@
-import { Entity, Property } from '@mikro-orm/core'
+import { Entity, IdentifiedReference, ManyToOne, Property } from '@mikro-orm/core'
 import { Field, ObjectType } from 'type-graphql'
 import { MongoClass } from './MongoClass'
+import { User } from './User'
 
 // @InputType()
 // export class adminPostInput {
@@ -12,7 +13,10 @@ import { MongoClass } from './MongoClass'
 @Entity()
 export class Post extends MongoClass {
 	@Field()
-	@Property({ type: 'text' })
+	@Property()
 	title!: string
-  creator: any
+
+	@Field(() => User)
+	@ManyToOne()
+	creator!: IdentifiedReference<User>
 }

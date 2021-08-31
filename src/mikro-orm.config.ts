@@ -6,8 +6,10 @@ import {
 } from '@mikro-orm/core'
 import { TsMorphMetadataProvider } from '@mikro-orm/reflection'
 import dotenv from 'dotenv'
+import { Request, Response } from 'express'
+import { SessionData } from 'express-session'
+import { Session } from 'inspector'
 import { Redis } from 'ioredis'
-// import {Request,Response} from "express"
 import path from 'path'
 import { Post } from './entities/Post'
 import { User } from './entities/User'
@@ -24,6 +26,14 @@ export type EntityName = typeof EntityName[number]
 export type Mycontext = {
 	em: EntityManager<IDatabaseDriver<Connection>>
 	redis: Redis
+	req: Request & {
+		session: Session &
+			Partial<SessionData> & {
+				userId: string | undefined
+				role: string
+			}
+	}
+	res: Response
 }
 export default {
 	metadataProvider: TsMorphMetadataProvider,

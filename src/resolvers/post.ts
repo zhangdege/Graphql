@@ -21,10 +21,10 @@ export class PostResolver {
 	 */
 	@Mutation(() => Post)
 	async createPost(
-		@Ctx() { em }: Mycontext,
+		@Ctx() { em, req }: Mycontext,
 		@Arg('title') title: String
 	): Promise<Post> {
-		const post = em.create(Post, { title })
+		const post = em.create(Post, { title, creator: req.session.userId })
 		await em.persistAndFlush(post)
 		return post
 	}
