@@ -82,6 +82,9 @@ const main = async () => {
 	// app.post(process.env.ALIPAY_CB, async (req: Request, res: Response) => {
 	//   await alipayCallBack(req, res, orm.em, pubSub)
 	// })
+	app.all('*', (req, res) => {
+		res.redirect('/graphql')
+	})
 	app.listen(process.env.PORT, () => {
 		console.log(`server at http://localhost:${process.env.PORT}`)
 	})

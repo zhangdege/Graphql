@@ -192,7 +192,7 @@ export class UserResolve {
 	@Mutation(() => Boolean)
 	async logout(@Ctx() { req, res }: Mycontext): Promise<boolean> {
 		return new Promise((resolve) => {
-			req.session.destroy((err) => {
+			req.session.destroy((err: any) => {
 				if (err) {
 					console.log(err)
 					resolve(false)

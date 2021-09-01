@@ -4,21 +4,11 @@ import { Mycontext } from '../mikro-orm.config'
 
 @Resolver(Post)
 export class PostResolver {
-	/**
-	 * Find all of the params Object and return.`
-	 * @param param0
-	 * @returns find target Object
-	 */
 	@Query(() => [Post])
 	posts(@Ctx() { em }: Mycontext): Promise<Post[]> {
 		return em.find(Post, {})
 	}
-	/**
-	 * Create an Object and flush into the databases.
-	 * @param param0
-	 * @param title
-	 * @returns an Object detail.
-	 */
+
 	@Mutation(() => Post)
 	async createPost(
 		@Ctx() { em, req }: Mycontext,
@@ -29,13 +19,6 @@ export class PostResolver {
 		return post
 	}
 
-	/**
-	 * this for update a record.
-	 * @param param0
-	 * @param id
-	 * @param title
-	 * @returns a update object.
-	 */
 	@Mutation(() => Post, { nullable: true })
 	async updatePost(
 		@Ctx() { em }: Mycontext,
@@ -50,14 +33,12 @@ export class PostResolver {
 		await em.persistAndFlush(post1)
 		return post1
 	}
-	/**
-	 * For delete an Object.
-	 * @param param0
-	 * @param id
-	 * @returns Boolean
-	 */
+
 	@Mutation(() => Boolean)
-	async deletePost(@Ctx() { em }: Mycontext, @Arg('id') id: string): Promise<true> {
+	async deletePost(
+		@Ctx() { em }: Mycontext,
+		@Arg('id') id: string
+	): Promise<Boolean> {
 		await em.nativeDelete(Post, { id })
 		return true
 	}
