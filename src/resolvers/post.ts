@@ -42,4 +42,15 @@ export class PostResolver {
 		await em.nativeDelete(Post, { id })
 		return true
 	}
+
+	// @Mutation(() => Post)
+	// async deletePost(
+	// 	// @Root() post: Post,
+	// 	@Ctx() { em }: Mycontext,
+	// 	@Arg('id') id: string
+	// ): Promise<Post | null> {
+	// 	const posts = em.findOne(Post, { id })
+	// 	await em.nativeDelete(Post, { id })
+	// 	return posts
+	// }
 }
