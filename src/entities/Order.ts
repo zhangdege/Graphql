@@ -1,14 +1,14 @@
-import { Entity, Property } from '@mikro-orm/core'
+import { Entity, ManyToOne, Property } from '@mikro-orm/core'
 import { Field, ObjectType } from 'type-graphql'
 import { MongoClass } from './MongoClass'
-// import { User } from './User'
+import { User } from './User'
 
 @ObjectType({ implements: MongoClass })
 @Entity()
 export class Order extends MongoClass {
-	// @Field(() => User)
-	// @ManyToOne(() => User)
-	// user!: User
+	@Field(() => User)
+	@ManyToOne(() => User)
+	user!: User
 
 	@Field(() => Number)
 	@Property({ type: 'number' })
@@ -21,5 +21,4 @@ export class Order extends MongoClass {
 	@Field(() => String)
 	@Property({ type: 'date', nullable: true })
 	paytime?: Date
-  user: any
 }

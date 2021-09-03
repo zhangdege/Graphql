@@ -11,13 +11,14 @@ import { SessionData } from 'express-session'
 import { Session } from 'inspector'
 import { Redis } from 'ioredis'
 import path from 'path'
+import { Order } from './entities/Order'
 import { Post } from './entities/Post'
 import { User } from './entities/User'
 
 dotenv.config({ path: path.join(__dirname, '..', '.env') })
 
-export const entities = [Post, User]
-const EntityName = ['Post', 'User'] as const
+export const entities = [Post, User, Order]
+const EntityName = ['Post', 'User', 'Order'] as const
 
 // I don't underStand why to write it ,because Although I am delete it , the program is work in normal.
 export type Items = typeof entities[number]

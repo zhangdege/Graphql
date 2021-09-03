@@ -16,9 +16,9 @@ import {
 import { Post } from '../entities/Post'
 import { User } from '../entities/User'
 import { Mycontext } from '../mikro-orm.config'
-import { isPhone } from '../Utils/isPhone'
-import { sendSMSToken } from '../Utils/sendSms'
-import { setAuth } from '../Utils/setAuth'
+import { isPhone } from '../utils/isPhone'
+import { sendSMSToken } from '../utils/sendSms'
+import { setAuth } from '../utils/setAuth'
 
 dotenv.config({ path: path.join(__dirname, '..', '.env') })
 

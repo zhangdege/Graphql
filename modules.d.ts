@@ -15,11 +15,8 @@ declare namespace NodeJS {
 		PHONE_TOKEN_AT_TIME_PREFIX: string
 		FRONTEND_URL: string
 		REDIS_SECRET: string
-		// PAGE_LIMIT: string
-		// MAX_QUERY_COMPLEXITY: string
-		// SMS_NAME: '洼盈科技' | '洼盈' | '曼德拉游戏'
+		ALIPAY_CB: string
 		alipayId: string
-		// ALIPAY_CB: string
 		// SERVER_URL: string
 	}
 }

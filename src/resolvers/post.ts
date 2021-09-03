@@ -1,5 +1,6 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from 'type-graphql'
+import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql'
 import { Post } from '../entities/Post'
+import { isAuth } from '../middleware/isAuth'
 import { Mycontext } from '../mikro-orm.config'
 
 @Resolver(Post)
@@ -9,6 +10,7 @@ export class PostResolver {
 		return em.find(Post, {})
 	}
 
+	@UseMiddleware(isAuth())
 	@Mutation(() => Post)
 	async createPost(
 		@Ctx() { em, req }: Mycontext,
@@ -19,6 +21,7 @@ export class PostResolver {
 		return post
 	}
 
+	@UseMiddleware(isAuth())
 	@Mutation(() => Post, { nullable: true })
 	async updatePost(
 		@Ctx() { em }: Mycontext,
@@ -34,6 +37,7 @@ export class PostResolver {
 		return post1
 	}
 
+	@UseMiddleware(isAuth())
 	@Mutation(() => Boolean)
 	async deletePost(
 		@Ctx() { em }: Mycontext,
@@ -42,15 +46,4 @@ export class PostResolver {
 		await em.nativeDelete(Post, { id })
 		return true
 	}
-
-	// @Mutation(() => Post)
-	// async deletePost(
-	// 	// @Root() post: Post,
-	// 	@Ctx() { em }: Mycontext,
-	// 	@Arg('id') id: string
-	// ): Promise<Post | null> {
-	// 	const posts = em.findOne(Post, { id })
-	// 	await em.nativeDelete(Post, { id })
-	// 	return posts
-	// }
 }
