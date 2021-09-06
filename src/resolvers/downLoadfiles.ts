@@ -4,11 +4,11 @@ import { Mycontext } from '../mikro-orm.config'
 
 @Resolver()
 export class DownloadFiles {
-	@Mutation(() => Boolean)
+	@Mutation(() => String)
 	async createExcelFiles(
 		@Ctx() { em }: Mycontext,
 		@Arg('groupInfo', () => [String]) groupInfo: string[]
-	): Promise<Boolean> {
+	): Promise<string> {
 		return new Promise((resolve, reject) => {
 			const datas = em.find(User, { id: { $in: groupInfo } })
 			console.log(datas)

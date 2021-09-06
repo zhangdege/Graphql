@@ -18,9 +18,13 @@ export class PictureUpload {
 	@Mutation(() => Boolean)
 	async addPictureFile(
 		@Ctx() { em }: Mycontext,
-		@Arg('picture', () => GraphQLUpload) { createReadStream, filename }: Upload
+		@Arg('picture', () => GraphQLUpload)
+		{ createReadStream, filename, mimetype, encoding }: Upload
 	): Promise<boolean> {
 		return new Promise(async (resolve, reject) => {
+			console.log({ filename, mimetype, encoding })
+			if (mimetype.includes('image/jpeg')) {
+			}
 			const nfilename = new Date().getTime() + filename
 			createReadStream()
 				.pipe(

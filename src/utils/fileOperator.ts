@@ -30,5 +30,5 @@ export const toXlsxFile = (data) => {
 		'test.xlsx'
 	)
 	xslx.writeFile(data, fileName)
-	return
+	return 'test.xlsx'
 }
