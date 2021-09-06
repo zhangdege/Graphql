@@ -9,8 +9,6 @@ export const isAuth =
 			throw new Error('not authenticated')
 		}
 		if (roles.length === 0) {
-			console.log('dd')
-
 			return next()
 		}
 

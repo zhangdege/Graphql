@@ -12,10 +12,11 @@ import Redis from 'ioredis'
 import path from 'path'
 import { buildSchema } from 'type-graphql'
 import myMikroconfig from './mikro-orm.config'
+import { DownloadFiles } from './resolvers/downLoadfiles'
+import { DataFromExcel, PictureUpload } from './resolvers/exploreExcelFile'
 import { Hello } from './resolvers/Hello'
 import { PaymentResolver } from './resolvers/order'
 import { PostResolver } from './resolvers/post'
-import { PictureUpload } from './resolvers/uploadFile'
 import { UserResolve } from './resolvers/user'
 import { usersTestResolver } from './utils/resolverGenerator'
 dotenv.config({ path: path.join(__dirname, '..', '.env') })
@@ -24,28 +25,12 @@ const main = async () => {
 	const orm = await MikroORM.init(myMikroconfig)
 	const app = express()
 	app.use('/static', express.static(path.join(__dirname, '..', '/public')))
+	/**
+	 * !文件上传必备配置
+	 */
 	app.use('/graphql', graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }))
 	app.use(express.json())
 	app.set('trust proxy', 1)
-	//设置跨域请求客户端
-	// const whitelist = [
-	// 	process.env.FRONTEND_URL,
-	// 	'http://192.168.50.148',
-	// 	'http://192.168.50.34',
-	// 	'http://localhost:8081',
-	// 	'http://localhost:8084',
-	// 	'http://localhost:8083',
-	// 	'http://localhost:8082',
-	// 	'*',
-	// ]
-	// const corsOptions = {
-	// 	credentials: true, // This is very important.
-	// 	origin: (origin, callback) => {
-	// 		if (whitelist.includes(origin)) return callback(null, true)
-	// 		callback(new Error('Not allowed by CORS'))
-	// 	},
-	// }
-	// app.use(cors(corsOptions))
 	/**原来的做法 */
 	app.use(
 		cors({
@@ -67,6 +52,9 @@ const main = async () => {
 	})
 
 	const apolloServer = new ApolloServer({
+		/**
+		 * !必须禁用appolo的upload功能，才能正常上传
+		 */
 		uploads: false,
 		schema: await buildSchema({
 			resolvers: [
@@ -76,6 +64,8 @@ const main = async () => {
 				Hello,
 				usersTestResolver,
 				PictureUpload,
+				DownloadFiles,
+				DataFromExcel,
 			],
 
 			validate: false,
