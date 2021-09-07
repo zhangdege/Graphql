@@ -18,7 +18,7 @@ export const readXslxFile = (filename) => {
 /**
  *
  * @param data
- * @returns files
+ * @returns xlsx files
  */
 export const toXlsxFile = (data) => {
 	const fileName = path.join(

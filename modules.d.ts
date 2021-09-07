@@ -18,6 +18,7 @@ declare namespace NodeJS {
 		ALIPAY_CB: string
 		alipayId: string
 		BTC_INFO_REQUEST_URL: string
+		AVATAR_URL: string
 		// SERVER_URL: string
 	}
 }

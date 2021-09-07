@@ -1,11 +1,10 @@
-// import { GraphQLUpload } from 'apollo-server-express'
 import { createWriteStream } from 'fs'
 import { GraphQLUpload } from 'graphql-upload'
 import path from 'path'
 import { Stream } from 'stream'
-import { Arg, Ctx, Mutation, Resolver } from 'type-graphql'
+import { Arg, Mutation, Resolver, UseMiddleware } from 'type-graphql'
 import { User } from '../entities/User'
-import { Mycontext } from '../mikro-orm.config'
+import { isAuth } from '../middleware/isAuth'
 export interface Upload {
 	filename: string
 	mimetype: string
@@ -14,28 +13,25 @@ export interface Upload {
 }
 @Resolver(User)
 export class PictureUpload {
-	// @UseMiddleware(isAuth())
+	@UseMiddleware(isAuth())
 	@Mutation(() => Boolean)
 	async addPictureFile(
-		@Ctx() { em }: Mycontext,
 		@Arg('picture', () => GraphQLUpload)
 		{ createReadStream, filename, mimetype, encoding }: Upload
-	): Promise<boolean> {
+	): Promise<Boolean> {
 		return new Promise(async (resolve, reject) => {
-			console.log({ filename, mimetype, encoding })
-			if (mimetype.includes('image/jpeg')) {
-			}
-			const nfilename = new Date().getTime() + filename
 			createReadStream()
 				.pipe(
 					createWriteStream(
-						path.join(__dirname, '..', '..', 'public', 'images', nfilename)
+						path.join(__dirname, '..', '..', 'public', 'images', filename)
 					)
 				)
 				.on('finish', async () => {
 					resolve(true)
 				})
-				.on('error', () => reject(false))
+				.on('error', () => {
+					reject(false)
+				})
 		})
 	}
 }
