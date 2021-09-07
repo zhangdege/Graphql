@@ -12,6 +12,7 @@ import Redis from 'ioredis'
 import path from 'path'
 import { buildSchema } from 'type-graphql'
 import myMikroconfig from './mikro-orm.config'
+import { BtcNotic } from './resolvers/btcResolver'
 import { DownloadFiles } from './resolvers/downLoadfiles'
 import { DataFromExcel } from './resolvers/exploreExcelFile'
 import { Hello } from './resolvers/Hello'
@@ -67,6 +68,7 @@ const main = async () => {
 				PictureUpload,
 				DownloadFiles,
 				DataFromExcel,
+				BtcNotic,
 			],
 
 			validate: false,

@@ -17,6 +17,7 @@ declare namespace NodeJS {
 		REDIS_SECRET: string
 		ALIPAY_CB: string
 		alipayId: string
+		BTC_INFO_REQUEST_URL: string
 		// SERVER_URL: string
 	}
 }

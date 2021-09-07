@@ -1,16 +1,38 @@
 import { PubSubEngine } from 'graphql-subscriptions'
-import { PubSub, Query, Resolver, Subscription } from 'type-graphql'
+import {
+	Field,
+	ObjectType,
+	PubSub,
+	Query,
+	Resolver,
+	Root,
+	Subscription,
+} from 'type-graphql'
 import { PAYMENTNOTICE } from '../const/topicts'
+
+@ObjectType()
+class output {
+	@Field()
+	message: string
+}
 
 @Resolver()
 export class Hello {
-	@Query(() => String)
+	@Query(() => output)
 	Hi(@PubSub() pubSub: PubSubEngine) {
-		pubSub.publish(PAYMENTNOTICE, 'result')
-		return 'Hello'
+		const arr = ['123', '321', '333']
+		let str = arr[Math.random() * 2]
+		const result = { message: '1234' }
+		setInterval(() => {
+			pubSub.publish(PAYMENTNOTICE, result)
+		}, 2000)
+		return result
 	}
-	@Subscription(() => String, { topics: PAYMENTNOTICE })
-	NoticeHi() {
-		return 'hello'
+	@Subscription(() => output, { topics: PAYMENTNOTICE })
+	NoticeHi(@Root() opt: output) {
+		const { message } = opt
+		return {
+			message,
+		}
 	}
 }
