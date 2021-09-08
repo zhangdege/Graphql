@@ -11,6 +11,10 @@ export interface Upload {
 	encoding: string
 	createReadStream: () => Stream
 }
+export interface multiUpload {
+	files: []
+	createReadStream: () => Stream
+}
 @Resolver(User)
 export class PictureUpload {
 	@UseMiddleware(isAuth())
@@ -32,6 +36,17 @@ export class PictureUpload {
 				.on('error', () => {
 					reject(false)
 				})
+		})
+	}
+
+	@UseMiddleware(isAuth())
+	@Mutation(() => Boolean)
+	async addMultiPictureFile(
+		@Arg('picture', () => [GraphQLUpload])
+		{ createReadStream, files }: multiUpload
+	): Promise<Boolean> {
+		return new Promise(async (resolve, reject) => {
+			console.log(files)
 		})
 	}
 }

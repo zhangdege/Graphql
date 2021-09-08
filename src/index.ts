@@ -24,8 +24,8 @@ import { usersTestResolver } from './utils/resolverGenerator'
 dotenv.config({ path: path.join(__dirname, '..', '.env') })
 
 const main = async () => {
-	const orm = await MikroORM.init(myMikroconfig)
 	const app = express()
+	const orm = await MikroORM.init(myMikroconfig)
 	app.use('/static', express.static(path.join(__dirname, '..', '/public')))
 	/**
 	 * !文件上传必备配置

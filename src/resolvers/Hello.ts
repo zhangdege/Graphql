@@ -20,8 +20,6 @@ class output {
 export class Hello {
 	@Query(() => output)
 	Hi(@PubSub() pubSub: PubSubEngine) {
-		const arr = ['123', '321', '333']
-		let str = arr[Math.random() * 2]
 		const result = { message: '1234' }
 		setInterval(() => {
 			pubSub.publish(PAYMENTNOTICE, result)
