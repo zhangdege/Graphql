@@ -104,6 +104,44 @@ export class UserResolve {
 		return UserResponse.createError('phone', '发送成功')
 	}
 
+	@Mutation(() => UserResponse)
+	async phoneLoginOrRegister(
+		@Ctx() { em, redis, req }: Mycontext,
+		@Arg('options') options: PhoneTokenInput,
+		@Arg('password', { nullable: true }) password?: string
+	): Promise<UserResponse> {
+		const { phone, token } = options
+		if (!isPhone(phone) || !token) {
+			return UserResponse.createError('phone', '出错了')
+		}
+		const valiphone = await redis.get(process.env.PHONE_PREFIX + token)
+		if (!valiphone || valiphone !== phone) {
+			return UserResponse.createError('token', '验证码错误')
+		}
+		redis.del(process.env.PHONE_PREFIX + token)
+		const user = await em.findOne(User, { phone })
+		if (!user) {
+			const salt = await bcrypt.genSalt(10)
+			let newUser: User
+
+			if (password) {
+				const hashedPassword = await bcrypt.hash(password, salt)
+				newUser = em.create(User, { phone: options.phone, password: hashedPassword })
+			} else {
+				newUser = em.create(User, { phone: options.phone })
+			}
+			await em.persistAndFlush(newUser)
+
+			setAuth(req.session, newUser)
+			return { user: newUser }
+		}
+		await em.persistAndFlush(user)
+
+		setAuth(req.session, user)
+
+		return { user }
+	}
+
 	@Mutation(() => User)
 	async createUser(
 		@Ctx() { em }: Mycontext,

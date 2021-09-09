@@ -1,13 +1,36 @@
-import { Arg, Ctx, Mutation, Query, Resolver, UseMiddleware } from 'type-graphql'
+import {
+	Arg,
+	Ctx,
+	FieldResolver,
+	Mutation,
+	Query,
+	Resolver,
+	Root,
+	UseMiddleware,
+} from 'type-graphql'
 import { Post } from '../entities/Post'
+import { User } from '../entities/User'
 import { isAuth } from '../middleware/isAuth'
 import { Mycontext } from '../mikro-orm.config'
 
 @Resolver(Post)
 export class PostResolver {
+	@FieldResolver(() => User)
+	creator(@Root() post: Post, @Ctx() { em }: Mycontext): Promise<User | null> {
+		return em.findOne(User, { id: post.creator.id })
+	}
+
 	@Query(() => [Post])
 	posts(@Ctx() { em }: Mycontext): Promise<Post[]> {
 		return em.find(Post, {})
+	}
+
+	@Query(() => Post, { nullable: true })
+	post(
+		@Ctx() { em }: Mycontext,
+		@Arg('id', () => String) id: string
+	): Promise<Post | null> {
+		return em.findOne(Post, { id })
 	}
 
 	@UseMiddleware(isAuth())
